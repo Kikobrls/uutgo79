@@ -1,0 +1,109 @@
+Table: guru
+  - id_guru (int(11)) [PK, AUTO_INCREMENT]
+  - username (varchar(50)) [UNIQUE]
+  - password (varchar(255))
+  - nama_guru (varchar(100))
+  - level (enum('admin','guru'))
+  - foto (varchar(255))
+  - status (enum('active','inactive'))
+  - last_login (datetime)
+  - created_at (timestamp)
+  - updated_at (timestamp)
+
+Table: kas
+  - id_kas (int(11)) [PK, AUTO_INCREMENT]
+  - id_transaksi (int(11))
+  - tanggal (date)
+  - saldo_sebelum (decimal(15,2))
+  - debit (decimal(15,2))
+  - kredit (decimal(15,2))
+  - saldo_sesudah (decimal(15,2))
+  - created_at (timestamp)
+
+Table: kategori_keuangan
+  - id_kategori (int(11)) [PK, AUTO_INCREMENT]
+  - nama_kategori (varchar(100))
+  - created_at (timestamp)
+  - updated_at (timestamp)
+
+Table: kelas
+  - id_kelas (int(11)) [PK, AUTO_INCREMENT]
+  - nama_kelas (varchar(50))
+  - deskripsi (text)
+  - status (enum('active','inactive'))
+  - created_at (timestamp)
+
+Table: log_aktivitas
+  - id_log (int(11)) [PK, AUTO_INCREMENT]
+  - id_guru (int(11))
+  - aktivitas (varchar(255))
+  - tabel (varchar(50))
+  - data_id (varchar(50))
+  - ip_address (varchar(45))
+  - user_agent (text)
+  - created_at (timestamp)
+
+Table: pembayaran
+  - id_pembayaran (int(11)) [PK, AUTO_INCREMENT]
+  - id_guru (int(11)) [FK -> guru.id_guru]
+  - id_santri (int(11)) [FK -> santri.id]
+  - tgl_bayar (date)
+  - bulan_dibayar (varchar(20))
+  - tahun_dibayar (varchar(4))
+  - id_spp (int(11)) [FK -> spp.id_spp]
+  - jumlah_bayar (decimal(15,2))
+  - metode_bayar (enum('tunai','transfer','online'))
+  - keterangan (text)
+  - created_at (timestamp)
+
+Table: santri
+  - id (int(11)) [PK, AUTO_INCREMENT]
+  - nama (varchar(100))
+  - tempat_lahir (varchar(100))
+  - id_kelas (int(11)) [FK -> kelas.id_kelas]
+  - id_spp (int(11)) [FK -> spp.id_spp]
+  - alamat (text)
+  - telp_wali (varchar(15))
+  - status (enum('active','inactive','alumni'))
+  - created_at (timestamp)
+  - updated_at (timestamp)
+
+Table: settings
+  - id (int(11)) [PK, AUTO_INCREMENT]
+  - setting_key (varchar(100))
+  - setting_value (text)
+  - setting_type (enum('text','password','email','number','boolean','json'))
+  - setting_group (varchar(50))
+  - description (varchar(255))
+  - created_at (timestamp)
+  - updated_at (timestamp)
+
+Table: spp
+  - id_spp (int(11)) [PK, AUTO_INCREMENT]
+  - tahun (int(4))
+  - nominal (decimal(15,2))
+  - created_at (timestamp)
+
+Table: tarif_spp
+  - id_tarif (int(11)) [PK, AUTO_INCREMENT]
+  - tahun_ajaran (varchar(9))
+  - nominal (decimal(15,2))
+  - keterangan (varchar(255))
+  - status (enum('active','inactive'))
+  - created_at (timestamp)
+
+Table: transaksi
+  - id_transaksi (int(11)) [PK, AUTO_INCREMENT]
+  - tanggal (date)
+  - id_kategori (int(11)) [FK -> kategori_keuangan.id_kategori]
+  - id_santri (int(11)) [FK -> santri.id, NULL jika bukan transaksi per santri]
+  - uraian (varchar(255))
+  - debit (decimal(15,2)) [Pemasukan]
+  - kredit (decimal(15,2)) [Pengeluaran]
+  - bulan_spp (varchar(20)) [Untuk SPP: bulan yang dibayar]
+  - tahun_spp (varchar(4)) [Untuk SPP: tahun]
+  - metode_bayar (enum('tunai','transfer','online'))
+  - keterangan (text)
+  - id_guru (int(11)) [FK -> guru.id_guru, User yang input]
+  - created_at (timestamp)
+  - updated_at (timestamp)
