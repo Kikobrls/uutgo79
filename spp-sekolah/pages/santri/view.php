@@ -16,8 +16,8 @@ require_once '../../includes/sidebar.php';
 require_once '../../includes/topbar.php';
 
 // Get Data
-$nisn = isset($_GET['nisn']) ? sanitize($_GET['nisn']) : '';
-if (empty($nisn)) {
+$id = isset($_GET['id']) ? sanitize($_GET['id']) : '';
+if (empty($id)) {
     echo "<script>window.location.href='index.php';</script>";
     exit;
 }
@@ -26,7 +26,7 @@ $query = "SELECT s.*, k.nama_kelas, sp.nominal, sp.tahun as tahun_spp
           FROM santri s
           JOIN kelas k ON s.id_kelas = k.id_kelas
           LEFT JOIN spp sp ON s.id_spp = sp.id_spp
-          WHERE s.nisn = '$nisn'";
+          WHERE s.id = '$id'";
 $result = mysqli_query($conn, $query);
 $data = mysqli_fetch_assoc($result);
 
@@ -37,7 +37,7 @@ if (!$data) {
 }
 
 // Payment History
-$payments = mysqli_query($conn, "SELECT * FROM pembayaran WHERE nisn = '$nisn' ORDER BY tgl_bayar DESC");
+$payments = mysqli_query($conn, "SELECT * FROM pembayaran WHERE id_santri = '$id' ORDER BY tgl_bayar DESC");
 ?>
 
 <div class="container-xxl flex-grow-1 container-p-y">
@@ -60,41 +60,29 @@ $payments = mysqli_query($conn, "SELECT * FROM pembayaran WHERE nisn = '$nisn' O
                         <i class="bx bx-user" style="font-size: 50px; color: #aaa;"></i>
                     </div>
                     <h5 class="card-title"><?php echo htmlspecialchars($data['nama']); ?></h5>
-                    <p class="text-muted"><?php echo htmlspecialchars($data['nisn']); ?> /
-                        <?php echo htmlspecialchars($data['nik']); ?></p>
                     <span class="badge bg-primary"><?php echo htmlspecialchars($data['nama_kelas']); ?></span>
                 </div>
                 <hr class="my-0">
                 <div class="card-body">
                     <div class="row mb-2">
-                        <div class="col-4 fw-bold">TTL</div>
+                        <div class="col-4 fw-bold">Tempat Lahir</div>
                         <div class="col-8">
-                            <?php echo htmlspecialchars($data['tempat_lahir']) . ', ' . date('d-m-Y', strtotime($data['tanggal_lahir'])); ?>
-                        </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-4 fw-bold">Gender</div>
-                        <div class="col-8"><?php echo $data['jenis_kelamin'] == 'L' ? 'Laki-laki' : 'Perempuan'; ?>
+                            <?php echo htmlspecialchars($data['tempat_lahir'] ?? '-'); ?>
                         </div>
                     </div>
                     <div class="row mb-2">
                         <div class="col-4 fw-bold">Alamat</div>
-                        <div class="col-8"><?php echo htmlspecialchars($data['alamat']); ?></div>
+                        <div class="col-8"><?php echo htmlspecialchars($data['alamat'] ?? '-'); ?></div>
                     </div>
                     <div class="row mb-2">
-                        <div class="col-4 fw-bold">NSPP</div>
-                        <div class="col-8"><?php echo htmlspecialchars($data['nspp']); ?></div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-4 fw-bold">Satuan</div>
-                        <div class="col-8"><?php echo htmlspecialchars($data['satuan_pendidikan']); ?></div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-4 fw-bold">Wali</div>
+                        <div class="col-4 fw-bold">Telp Wali</div>
                         <div class="col-8">
-                            <?php echo htmlspecialchars($data['nama_wali']); ?> <br>
-                            <small class="text-muted"><?php echo htmlspecialchars($data['telp_wali']); ?></small>
+                            <?php echo htmlspecialchars($data['telp_wali'] ?? '-'); ?>
                         </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-4 fw-bold">SPP</div>
+                        <div class="col-8">Rp <?php echo number_format($data['nominal'], 0, ',', '.'); ?></div>
                     </div>
                     <div class="row mb-2">
                         <div class="col-4 fw-bold">Status</div>
